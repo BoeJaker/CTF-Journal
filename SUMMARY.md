@@ -1,7 +1,7 @@
 # Table of contents
 
 * [Page 1](README.md)
-* [Over the wire](master/README.md)
+* [Over the wire](<README (1).md>)
   * [Natas](master/natas/README.md)
     * [Natas 1](master/natas/natas-1.md)
     * [Natas 2](master/natas/natas-2.md)
