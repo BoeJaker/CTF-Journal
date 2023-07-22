@@ -131,4 +131,133 @@ http://natas1.natas.labs.overthewire.org/
 
     Blind cookie fuzzing
 
+    The cookie is encoded, lacking the source code we must use the cookie to infer information about its encoding scheme.
+
+    Comparing multiple cookies generated with the same username and password input reveals the cookie has sections, 
+    certain characters are common to each of the cookies.
+    
+    Each cookie starts with the pattern 3?3?3? where ? is any number. This looks allot like hex ASCII, 
+    if we convert the value to deanery we get a three digit number that looks allot like a user ID from the last exercise.
+    
+    We can use this information to craft a python script that can fuzz the value of the cookie and watch for responses from natas19 that fall outside the norm.
+
+
+
 20 guVaZ3ET35LbgbFMoaN5tFcYT1jEP7UH
+
+    The PHPSESSID looks quite random and cannot be influenced directly by the input box
+
+    A couple of different warnings are visible about the session.save_path: /var/lib/php/sessions
+
+        Warning: Unknown: Session callback expects true/false return value in Unknown on line 0
+
+        Warning: Unknown: Failed to write session data using user defined save handler. (session.save_path: /var/lib/php/sessions) in Unknown on line 0
+    
+    Reading the source I can see the session file is split on newlines '\n' into the _SESSION array, which expects key value pairs.
+    
+    I can also see the admin user is set via an entry in the _SESSION array called 'admin', which must be set to 1.
+    
+    When 'name' parameter is posted, a new session is created and the input text is stored in 'name' variable within, without being sanitized.
+
+    Knowing this one could craft a name that sets the admin value to one. 
+    
+        name=natas21\nadmin 1&debug=.
+    
+    name = because we are using the name parameter for entry
+
+    natas21 could be any text i.e. admin, doesn't matter
+
+    \n to breakout the javascript and get it to interpret the next portion of the request as another key, value pair separated by a space
+
+    admin 1 is the key value pair that authorizes an admin account
+
+    &debug= to enable debug output like in previous examples.
+
+    Knowing this we can craft the request http://natas20.natas.labs.overthewire.org/index.php?name=natas21%0Aadmin%201&debug=
+    
+    But nothing shows up? Thats because we have only set the session file we haven't called it, so to speak. 
+    
+    Refresh the page and the session you crafted will load with the page which will display the flag for the next level.
+
+
+
+21. 89OWrTkGmiLZLv12JY4tLj2c4FW0xn56
+
+    This exercise consists of two pages, the landing page, with just, text, a link and some code to reveal the flag. 
+    
+    The second page is an 'experimenter' page which has some inputs for CSS but has no obvious connection to the first page other than a shared session.
+
+    The admin variable remains the mechanism by which escalation is achieved.
+
+    The 'submit' paramter must be present to submit values to the session.
+
+    Combining the three parameters into one statement is enough in this case:
+    
+        &debug=&submit=&admin=1 
+
+    http://natas21.natas.labs.overthewire.org/index.php?&debug=&submit=&admin=1 
+
+    Go back to the landing page and the session parameters should have taken effect if not try reloading the above url
+
+
+
+22. 91awVM9oDiUGm33JdzM7RVLBS8bz9n0s
+
+    Reading the code - this one looks simple.
+
+    The parameter revelio must be supplied as a get request in order to reveal the flag.
+
+    we can use a single curl command to achieve this.
+
+        curl -i -XGET -u natas22:91awVM9oDiUGm33JdzM7RVLBS8bz9n0s http://natas22.natas.labs.overthewire.org/?revelio
+
+23 qjA8cOoKFTzJhtV0Fzvt92fgvxVnVRBj
+
+    Reading the code, again this is simple.
+
+    The parameter passwd can be set and to reveal the flag the line
+
+        if(strstr($_REQUEST["passwd"],"iloveyou") && ($_REQUEST["passwd"] > 10 )){
+
+    For that to occur the passwd must contain a substring of iloveyou and an integer larger than 10
+
+    i.e. 11iloveyou
+
+    they must be put in this order because of the way PHP interprets strings starting with numbers, it allows comparison based on the leading digits.
+
+24 0xzF30T9Av8lgXhW7slhFCIsVKAPyl2r
+
+    strcmp has several issues, it will return an exit code of 0  if a non-string is passed to it, it can also give away information to fuzzers though its exit codes.
+
+    Knowing this you can send an empty array using the url parameters
+
+    ?passwd%5B%5D - equivalent to ?passwd[]
+
+    notice the '=' symbol has been omitted, this is because we are changing the type of passwd to an array to invoke a 0 exit code from strcmp.
+
+
+25 O9QD9DZBDq1YpswiTM5oqMDaOtuZtAcx
+
+    Reading the code i can see there are protections against directory traversal on the single available parameter, using php's strstr, looking for ../ as a substring. 
+    
+    It then removes ../ from the input when found, but performs no checks on the output of the replace function.
+    
+    This means the string ....// will become ..// and allow diretory traversal via the url parameter 'lang'
+
+    However there are further checks that look for file names relating to the path of password.
+
+    Looking further into the code you can see the logRequest function can write files and has an un-sanitised input vector via the HTTP_USER_AGENT aka User-Agent header parameter.
+
+    This will allow us to inject a payload into the log that could be executed if we can load the log file.
+
+    The directory traversal exploit we found in the first steps provides a mechanism for executing the code injected into the log file.
+
+    To perform this attack we need to send a get request to the website with the customised user-agent, generate a PHPSESSID so that we can call the log, then make another request to execute the injected payload.
+    
+    We also need to craft the payload, a php one liner that can write the password to the page would be the most convenient.
+
+        <?php global $__FOOTER; $__FOOTER=file_get_contents('/etc/natas_webpass/natas26'); ?>
+
+    Here we read the contents of the password file into the footer element via the __FOOTER variable.
+
+26 8A506rfIAXbKKk68yJeuTuRq4UfcK70k
