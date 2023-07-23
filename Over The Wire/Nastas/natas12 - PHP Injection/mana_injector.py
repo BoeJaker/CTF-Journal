@@ -15,9 +15,9 @@ def change_file_signature(file_path, new_signature, override_extension):
 
     # Generate a new file name with the desired extension
     if override_extension:
-        new_file_name = f"modified_{file_path}.{file_extension}"
+        new_file_name = f"{file_path}.{file_extension}"
     else:
-        new_file_name = f"modified_{file_path}"
+        new_file_name = f"{file_path}"
 
     # Rename the file
     os.rename(file_path, new_file_name)

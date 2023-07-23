@@ -16,7 +16,7 @@ def generate_index_file(markdown_files, output_file):
             depth = relative_path.count(os.sep)
             indentation = "\t" * depth
             link_text = os.path.basename(file).replace(".md", "")
-            f.write(f"{indentation}- [{link_text}]({relative_path})  \n")
+            f.write(f"{indentation}- [{link_text}]({relative_path})\t\n")
 
 # Example usage
 directory = os.getcwd()
