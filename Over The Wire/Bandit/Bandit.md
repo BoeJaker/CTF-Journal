@@ -99,9 +99,69 @@ im not using the hints
 
     I ran the text though a ceaser cipher brute script written in python.
 
-    Shift 13: The password is JVNBBFSmZwKKOP0XbFXOoW8chDz5yVRv
+        Shift 13: The password is JVNBBFSmZwKKOP0XbFXOoW8chDz5yVRv
 
 
 12. JVNBBFSmZwKKOP0XbFXOoW8chDz5yVRv
 
-    
+    xxd -r data.txt data.gz
+
+    gzip -d data.gz 
+
+    xxd data
+
+    bzip2 -d data
+
+    xxd data.out
+
+    mv data.out data.gz
+
+    gzip -d data.gz
+
+    xxd data
+
+    file data
+
+    mv data data.tar
+
+    tar -xf data.tar
+
+    xxd data5.bin
+
+    tar -xf data5.bin
+
+    xxd data6.bin
+
+    bzip2 -d data6.bin
+
+    xxd -data6.bin.out
+
+    file data6.bin.out
+
+    mv data6.bin.out data6.tar
+
+    tar -xf data6.tar
+
+    xxd data8.bin
+
+    mv data8.bin data8.gz
+
+    gzip -d data8.gz
+
+    cat data8
+
+13. wbWdlBxEir4CaE8LaPhauuOo6pwRmrDw
+
+    ssh -i sshkey.private -p 2220 bandit14@localhost
+
+    cat /etc/bandit_pass/bandit14 
+
+14. fGrHPx402xGC7U7rXKDaxiWFTOiF0ENq
+
+    nc localhost 30000
+
+15. jN2kgmIXJ6fShzhT2avhotn4Zcka6tnt
+
+16. 
+
+17.
